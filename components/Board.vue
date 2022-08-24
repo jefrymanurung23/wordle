@@ -8,9 +8,9 @@
         v-model="word[i]"
         type="text"
         maxlength="5"
+        :disabled="wordNumber >= 6"
         @keyup.enter="onEnter(word[i])"
         @keydown="restrictInput($event)"
-        :disabled="wordNumber >= 6"
       >
     </div>
     <div
@@ -46,7 +46,8 @@ export default {
   },
   computed: {
     getWordGuess () {
-      return wordlist[Math.floor(Math.random() * wordlist.length)]
+      // return wordlist[Math.floor(Math.random() * wordlist.length)]
+      return 'imbal'
     },
     getWordlist () {
       return wordlist
@@ -182,7 +183,7 @@ export default {
   align-items: center;
   font-size: 2rem;
   line-height: 2rem;
-  font-weight: bold;
+  font-weight: 600;
   text-transform: uppercase;
 }
 
