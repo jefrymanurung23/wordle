@@ -126,6 +126,12 @@ export default {
             timer += 500
           }
           if (word.toUpperCase() === this.getWordGuess.toUpperCase()) {
+            for (let i = (this.wordNumber * 5); i < ((this.wordNumber + 1) * 5); i++) {
+              setTimeout(() => {
+                document.getElementsByClassName('box')[i].classList.add('box__completed')
+              }, timer)
+              timer += 300
+            }
             this.wordNumber = 6
           } else {
             this.wordNumber += 1
@@ -221,6 +227,10 @@ export default {
   transform: rotateX(-0.5turn);
 }
 
+.box__completed {
+  animation: jump 0.8s linear;
+}
+
 .overlay {
   height: 100vh;
   width: 100vw;
@@ -249,6 +259,12 @@ export default {
   40%, 60% {
     transform: translate3d(4px, 0, 0);
   }
+}
+
+@keyframes jump {
+    0% { transform: translate(0%, 0%) rotateX(-0.5turn)}
+    50% { transform: translate(0%, -30%) rotateX(-0.5turn)}
+    100% { transform: translate(0%, 0%) rotateX(-0.5turn)}
 }
 
 </style>
