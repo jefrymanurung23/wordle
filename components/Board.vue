@@ -1,5 +1,6 @@
 <template>
   <div class="container">
+    <ToastMessage v-if="showToast" :message="wording.toast.completed"/>
     <div class="hidden-input">
       <input
         v-for="(nInput, i) in 6"
@@ -35,14 +36,20 @@
 
 <script>
 import wordlist from '@/static/data/wordlist.json'
+import id from '@/static/data/lang/id.json'
+import ToastMessage from '@/components/ToastMessage.vue'
 
 export default {
   name: 'BoardComponent',
   data () {
     return {
       word: ['', '', '', '', '', ''],
-      wordNumber: 0
+      wordNumber: 0,
+      showToast: false
     }
+  },
+  components: {
+    ToastMessage
   },
   computed: {
     getWordGuess () {
@@ -51,6 +58,9 @@ export default {
     },
     getWordlist () {
       return wordlist
+    },
+    wording () {
+      return id
     }
   },
   mounted () {
@@ -127,12 +137,18 @@ export default {
             timer += 500
           }
           if (word.toUpperCase() === this.getWordGuess.toUpperCase()) {
+            setTimeout(() => {
+              this.showToast = true
+            }, timer - 300)
             for (let i = (this.wordNumber * 5); i < ((this.wordNumber + 1) * 5); i++) {
               setTimeout(() => {
                 document.getElementsByClassName('box')[i].classList.add('box__completed')
               }, timer)
               timer += 300
             }
+            setTimeout(() => {
+              this.showToast = false
+            }, timer + 1000)
             this.wordNumber = 6
           } else {
             this.wordNumber += 1
