@@ -46,7 +46,8 @@ export default {
   },
   computed: {
     getWordGuess () {
-      return wordlist[Math.floor(Math.random() * wordlist.length)]
+      // return wordlist[Math.floor(Math.random() * wordlist.length)]
+      return 'imbal'
     },
     getWordlist () {
       return wordlist
@@ -57,9 +58,11 @@ export default {
   },
   methods: {
     focusInput (number) {
-      this.$nextTick(() => {
-        this.$refs[`word${number}`][0].focus()
-      })
+      if (number !== 5) {
+        this.$nextTick(() => {
+          this.$refs[`word${number}`][0].focus()
+        })
+      }
     },
     restrictInput (e) {
       if (/[^A-Za-z]/g.test(e.key)) {
@@ -77,23 +80,59 @@ export default {
                 document.getElementsByClassName('box')[i].classList.add('box__wrong')
               }, timer)
             }
-            if (this.getWordGuess.toUpperCase().includes(word[j].toUpperCase())) {
-              setTimeout(() => {
-                document.getElementsByClassName('box')[i].classList.add('box__almost')
-              }, timer)
-            }
             if (word[j].toUpperCase() === this.getWordGuess[j].toUpperCase()) {
               setTimeout(() => {
                 document.getElementsByClassName('box')[i].classList.add('box__correct')
               }, timer)
+            } else if (this.getWordGuess.toUpperCase().includes(word[j].toUpperCase())) {
+              let isDuplicate = false
+              let isAlmost = false
+              for (let k = j + 1; k < 5; k++) {
+                if (word[j].toUpperCase() === word[k].toUpperCase()) {
+                  if (word[k].toUpperCase() === this.getWordGuess[k].toUpperCase()) {
+                    setTimeout(() => {
+                      document.getElementsByClassName('box')[i].classList.add('box__wrong')
+                    }, timer)
+                    isDuplicate = true
+                    break
+                  } else {
+                    isAlmost = true
+                  }
+                } else {
+                  isAlmost = true
+                }
+              }
+              for (let k = j - 1; k >= 0; k--) {
+                if (word[j].toUpperCase() === word[k].toUpperCase()) {
+                  if (word[k].toUpperCase() === this.getWordGuess[k].toUpperCase()) {
+                    setTimeout(() => {
+                      document.getElementsByClassName('box')[i].classList.add('box__wrong')
+                    }, timer)
+                    isDuplicate = true
+                    break
+                  } else {
+                    isAlmost = true
+                  }
+                } else {
+                  isAlmost = true
+                }
+              }
+              if (!isDuplicate && isAlmost) {
+                setTimeout(() => {
+                  document.getElementsByClassName('box')[i].classList.add('box__almost')
+                }, timer)
+              }
             }
             j++
             timer += 500
           }
-          this.wordNumber += 1
+          if (word.toUpperCase() === this.getWordGuess.toUpperCase()) {
+            this.wordNumber = 5
+          } else {
+            this.wordNumber += 1
+          }
           this.focusInput(this.wordNumber)
         } else {
-          console.log(this.getWordGuess)
           document.getElementsByClassName('row')[this.wordNumber].classList.add('row__incorrect')
           setTimeout(() => {
             document.getElementsByClassName('row')[this.wordNumber].classList.remove('row__incorrect')
