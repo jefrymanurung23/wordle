@@ -1,9 +1,8 @@
-<!-- Please remove this file from your project -->
 <template>
   <div class="container">
     <div class="hidden-input">
       <input
-        v-for="(nInput, i) in 5"
+        v-for="(nInput, i) in 6"
         :key="`input-${i}`"
         :ref="`word${i}`"
         v-model="word[i]"
@@ -11,10 +10,11 @@
         maxlength="5"
         @keyup.enter="onEnter(word[i])"
         @keydown="restrictInput($event)"
+        :disabled="wordNumber >= 6"
       >
     </div>
     <div
-      v-for="(nRow, j) in 5"
+      v-for="(nRow, j) in 6"
       :key="`row-${j}`"
       class="row"
     >
@@ -40,14 +40,13 @@ export default {
   name: 'BoardComponent',
   data () {
     return {
-      word: ['', '', '', '', ''],
+      word: ['', '', '', '', '', ''],
       wordNumber: 0
     }
   },
   computed: {
     getWordGuess () {
-      // return wordlist[Math.floor(Math.random() * wordlist.length)]
-      return 'imbal'
+      return wordlist[Math.floor(Math.random() * wordlist.length)]
     },
     getWordlist () {
       return wordlist
@@ -58,7 +57,7 @@ export default {
   },
   methods: {
     focusInput (number) {
-      if (number !== 5) {
+      if (number < 6) {
         this.$nextTick(() => {
           this.$refs[`word${number}`][0].focus()
         })
@@ -70,7 +69,7 @@ export default {
       }
     },
     onEnter (word) {
-      if (this.wordNumber !== 5) {
+      if (this.wordNumber < 6) {
         if (this.word[this.wordNumber].length === 5 && this.getWordlist.includes(word)) {
           let j = 0
           let timer = 0
@@ -127,7 +126,7 @@ export default {
             timer += 500
           }
           if (word.toUpperCase() === this.getWordGuess.toUpperCase()) {
-            this.wordNumber = 5
+            this.wordNumber = 6
           } else {
             this.wordNumber += 1
           }
@@ -193,6 +192,7 @@ export default {
   transition: transform 0.7s;
   transform-style: preserve-3d;
   transition-timing-function: linear;
+  color: #ffffff;
 }
 
 .box__almost {
@@ -202,6 +202,7 @@ export default {
   transition: transform 0.7s;
   transform-style: preserve-3d;
   transition-timing-function: linear;
+  color: #ffffff;
 }
 
 .box__correct {
@@ -211,6 +212,7 @@ export default {
   transition: transform 0.7s;
   transform-style: preserve-3d;
   transition-timing-function: linear;
+  color: #ffffff;
 }
 
 .box__almost > span,
