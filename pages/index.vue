@@ -1,10 +1,29 @@
 <template>
-  <Board />
+  <div>
+    <Board :wording="wording" :keyboard-input="getKeyboardInput" />
+    <VirtualKeyboard />
+  </div>
 </template>
 
 <script>
+import id from '@/static/data/lang/id.json'
+import Board from '~/components/Board.vue'
+import VirtualKeyboard from '~/components/VirtualKeyboard.vue'
+
 export default {
-  name: 'IndexPage'
+  name: 'IndexPage',
+  components: {
+    Board,
+    VirtualKeyboard
+  },
+  computed: {
+    wording () {
+      return id
+    },
+    getKeyboardInput () {
+      return this.$store.state.keyboardInput
+    }
+  }
 }
 </script>
 

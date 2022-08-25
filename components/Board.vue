@@ -1,76 +1,122 @@
 <template>
-  <div class="container">
-    <ToastMessage v-if="showToast" :message="wording.toast.completed"/>
-    <div class="hidden-input">
-      <input
-        v-for="(nInput, i) in 6"
-        :key="`input-${i}`"
-        :ref="`word${i}`"
-        v-model="word[i]"
-        type="text"
-        maxlength="5"
-        :disabled="wordNumber >= 6"
-        @keyup.enter="onEnter(word[i])"
-        @keydown="restrictInput($event)"
-      >
-    </div>
-    <div
-      v-for="(nRow, j) in 6"
-      :key="`row-${j}`"
-      class="row"
-    >
+  <div>
+    <ToastMessage v-if="showToast" :message="wording.toast.completed" />
+    <div class="board">
+      <div class="hidden-input">
+        <input
+          v-for="(nInput, i) in 6"
+          :key="`board-input-${i}`"
+          :ref="`word${i}`"
+          v-model="word[i]"
+          type="text"
+          maxlength="5"
+          :disabled="wordNumber >= 6"
+          @keyup.enter="onEnter(word[i])"
+          @keydown="restrictInput($event)"
+          @focus="hideMobileKeyboard"
+        >
+      </div>
       <div
-        v-for="(nCol, k) in 5"
-        :key="`box-${j}-${k}`"
-        class="box"
-        :class="{ 'box__filled': word[j][k] !== undefined }"
+        v-for="(nRow, i) in 6"
+        :key="`board-row-${i}`"
+        class="board__row"
       >
-        <span>
-          {{ word[j][k] }}
-        </span>
+        <div
+          v-for="(nCol, j) in 5"
+          :key="`board-box-${i}-${j}`"
+          class="board__box"
+          :class="{ 'board__box_filled': word[i][j] !== undefined }"
+        >
+          <span>
+            {{ word[i][j] }}
+          </span>
+        </div>
       </div>
     </div>
-    <div class="overlay" @click="focusInput(wordNumber)" />
+    <div class="overlay" @click="focusInput()" />
   </div>
 </template>
 
 <script>
 import wordlist from '@/static/data/wordlist.json'
-import id from '@/static/data/lang/id.json'
 import ToastMessage from '@/components/ToastMessage.vue'
 
 export default {
   name: 'BoardComponent',
+  components: {
+    ToastMessage
+  },
+  props: {
+    wording: {
+      type: Object,
+      default () {
+        return {}
+      }
+    },
+    keyboardInput: {
+      type: String,
+      default: ''
+    }
+  },
   data () {
     return {
-      word: ['', '', '', '', '', ''],
+      word: {
+        0: '',
+        1: '',
+        2: '',
+        3: '',
+        4: '',
+        5: ''
+      },
       wordNumber: 0,
       showToast: false
     }
   },
-  components: {
-    ToastMessage
-  },
   computed: {
     getWordGuess () {
-      // return wordlist[Math.floor(Math.random() * wordlist.length)]
-      return 'imbal'
+      return wordlist[Math.floor(Math.random() * wordlist.length)]
     },
     getWordlist () {
       return wordlist
-    },
-    wording () {
-      return id
+    }
+  },
+  watch: {
+    keyboardInput (newLetter, oldLetter) {
+      if (this.wordNumber < 6) {
+        if (this.$refs[`word${this.wordNumber}`][0].value.length < 6 && newLetter !== '') {
+          if (newLetter === 'enter') {
+            this.onEnter(this.word[this.wordNumber])
+          } else if (newLetter === 'del') {
+            this.$store.commit('deleteKeyboardInput')
+            this.$nextTick(() => {
+              this.$refs[`word${this.wordNumber}`][0].value = this.$refs[`word${this.wordNumber}`][0].value.slice(0, -1)
+              this.word[this.wordNumber] = this.word[this.wordNumber].slice(0, -1)
+            })
+          } else {
+            this.$nextTick(() => {
+              this.$refs[`word${this.wordNumber}`][0].value += newLetter
+              this.word[this.wordNumber] += newLetter
+            })
+          }
+        }
+        this.$refs[`word${this.wordNumber}`][0].focus()
+        this.$store.commit('emptyKeyboardInput')
+      }
     }
   },
   mounted () {
     this.focusInput(this.wordNumber)
   },
   methods: {
-    focusInput (number) {
-      if (number < 6) {
+    hideMobileKeyboard () {
+      if (this.$store.state.device.isMobile) {
+        document.activeElement.blur()
+      }
+    },
+    focusInput () {
+      if (this.wordNumber < 6) {
         this.$nextTick(() => {
-          this.$refs[`word${number}`][0].focus()
+          this.$refs[`word${this.wordNumber}`][0].focus()
         })
       }
     },
@@ -87,12 +133,12 @@ export default {
           for (let i = (this.wordNumber * 5); i < ((this.wordNumber + 1) * 5); i++) {
             if (!this.getWordGuess.toUpperCase().includes(word[j].toUpperCase())) {
               setTimeout(() => {
-                document.getElementsByClassName('box')[i].classList.add('box__wrong')
+                document.getElementsByClassName('board__box')[i].classList.add('board__box_wrong')
               }, timer)
             }
             if (word[j].toUpperCase() === this.getWordGuess[j].toUpperCase()) {
               setTimeout(() => {
-                document.getElementsByClassName('box')[i].classList.add('box__correct')
+                document.getElementsByClassName('board__box')[i].classList.add('board__box_correct')
               }, timer)
             } else if (this.getWordGuess.toUpperCase().includes(word[j].toUpperCase())) {
               let isDuplicate = false
@@ -101,7 +147,7 @@ export default {
                 if (word[j].toUpperCase() === word[k].toUpperCase()) {
                   if (word[k].toUpperCase() === this.getWordGuess[k].toUpperCase()) {
                     setTimeout(() => {
-                      document.getElementsByClassName('box')[i].classList.add('box__wrong')
+                      document.getElementsByClassName('board__box')[i].classList.add('board__box_wrong')
                     }, timer)
                     isDuplicate = true
                     break
@@ -116,7 +162,7 @@ export default {
                 if (word[j].toUpperCase() === word[k].toUpperCase()) {
                   if (word[k].toUpperCase() === this.getWordGuess[k].toUpperCase()) {
                     setTimeout(() => {
-                      document.getElementsByClassName('box')[i].classList.add('box__wrong')
+                      document.getElementsByClassName('board__box')[i].classList.add('board__box_wrong')
                     }, timer)
                     isDuplicate = true
                     break
@@ -129,7 +175,7 @@ export default {
               }
               if (!isDuplicate && isAlmost) {
                 setTimeout(() => {
-                  document.getElementsByClassName('box')[i].classList.add('box__almost')
+                  document.getElementsByClassName('board__box')[i].classList.add('board__box_almost')
                 }, timer)
               }
             }
@@ -142,22 +188,22 @@ export default {
             }, timer - 300)
             for (let i = (this.wordNumber * 5); i < ((this.wordNumber + 1) * 5); i++) {
               setTimeout(() => {
-                document.getElementsByClassName('box')[i].classList.add('box__completed')
+                document.getElementsByClassName('board__box')[i].classList.add('board__box_completed')
               }, timer)
               timer += 300
             }
             setTimeout(() => {
               this.showToast = false
+              this.wordNumber = 6
             }, timer + 1000)
-            this.wordNumber = 6
           } else {
             this.wordNumber += 1
           }
           this.focusInput(this.wordNumber)
         } else {
-          document.getElementsByClassName('row')[this.wordNumber].classList.add('row__incorrect')
+          document.getElementsByClassName('board__row')[this.wordNumber].classList.add('board__row_incorrect')
           setTimeout(() => {
-            document.getElementsByClassName('row')[this.wordNumber].classList.remove('row__incorrect')
+            document.getElementsByClassName('board__row')[this.wordNumber].classList.remove('board__row_incorrect')
           }, 900)
         }
       }
@@ -167,11 +213,12 @@ export default {
 </script>
 
 <style>
-.container {
-  height: 100vh;
+.board {
+  position: fixed;
+  top: 80px;
+  left: 50%;
+  transform: translate(-50%, 0);
   display: flex;
-  justify-content: center;
-  align-items: center;
   flex-direction: column;
   gap: 5px;
 }
@@ -181,19 +228,19 @@ export default {
   opacity: 0;
 }
 
-.row {
+.board__row {
   display: flex;
   gap: 5px;
 }
 
-.row__incorrect {
+.board__row_incorrect {
   animation: shake 0.82s cubic-bezier(.36,.07,.19,.97) both;
 }
 
-.box {
+.board__box {
   width: 62px;
   aspect-ratio: 1;
-  border: 2px solid #d3d6da;
+  border: 2px solid var(--lightgrey);
   display: flex;
   justify-content: center;
   align-items: center;
@@ -203,48 +250,43 @@ export default {
   text-transform: uppercase;
 }
 
-.box__filled {
-  border: 2px solid #878a8c;
+.board__box_filled {
+  border: 2px solid var(--darkgrey);
   animation: pop 0.1s linear;
 }
 
-.box__wrong {
-  border: 2px solid #787c7e;
-  background-color: #787c7e;
+.board__box_wrong,
+.board__box_almost,
+.board__box_correct {
   transform: rotateX(0.5turn);
   transition: transform 0.7s;
   transform-style: preserve-3d;
   transition-timing-function: linear;
-  color: #ffffff;
+  color: var(--white);
 }
 
-.box__almost {
-  border: 2px solid #c9b458;
-  background-color: #c9b458;
-  transform: rotateX(0.5turn);
-  transition: transform 0.7s;
-  transform-style: preserve-3d;
-  transition-timing-function: linear;
-  color: #ffffff;
+.board__box_wrong {
+  border: 2px solid var(--grey);
+  background-color: var(--grey);
 }
 
-.box__correct {
-  border: 2px solid #6aaa64;
-  background-color: #6aaa64;
-  transform: rotateX(0.5turn);
-  transition: transform 0.7s;
-  transform-style: preserve-3d;
-  transition-timing-function: linear;
-  color: #ffffff;
+.board__box_almost {
+  border: 2px solid var(--yellow);
+  background-color: var(--yellow);
 }
 
-.box__almost > span,
-.box__correct > span,
-.box__wrong > span {
+.board__box_correct {
+  border: 2px solid var(--green);
+  background-color: var(--green);
+}
+
+.board__box_wrong > span,
+.board__box_almost > span,
+.board__box_correct > span {
   transform: rotateX(-0.5turn);
 }
 
-.box__completed {
+.board__box_completed {
   animation: jump 0.8s linear;
 }
 
@@ -284,4 +326,13 @@ export default {
     100% { transform: translate(0%, 0%) rotateX(-0.5turn)}
 }
 
+@media only screen and (max-width: 768px) {
+  .board {
+    top: 60px;
+  }
+  .board__box {
+    width: 58px;
+    aspect-ratio: 1;
+  }
+}
 </style>
