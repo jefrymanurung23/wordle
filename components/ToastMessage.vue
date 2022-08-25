@@ -22,8 +22,10 @@ export default {
   padding: 16px;
   position: fixed;
   top: 50px;
-  background-color: #538d4e;
-  color: #ffffff;
+  left: 50%;
+  transform: translate(-50%, 0);
+  background-color: var(--green);
+  color: var(--white);
   text-align: center;
   font-weight: 600;
   font-size: 1rem;
@@ -31,6 +33,10 @@ export default {
   z-index: 10;
   animation: fadein 0.8s, fadeout 0.8s 2s;
   -webkit-animation: fadein 0.8s, fadeout 0.8s 2s;
+  user-select: none;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  box-shadow: rgb(38, 57, 77) 0px 20px 30px -10px;
 }
 
 @-webkit-keyframes fadein {
