@@ -215,7 +215,7 @@ export default {
 <style>
 .board {
   position: fixed;
-  top: 80px;
+  top: 90px;
   left: 50%;
   transform: translate(-50%, 0);
   display: flex;
