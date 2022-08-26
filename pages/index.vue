@@ -1,8 +1,9 @@
 <template>
   <div>
-    <Header />
+    <Header @showHelpPopup="showHelpPopup = true" />
     <Board :wording="wording" :keyboard-input="getKeyboardInput" />
     <VirtualKeyboard />
+    <HelpPopup v-if="showHelpPopup" @closeHelpPopup="showHelpPopup = false" />
   </div>
 </template>
 
@@ -11,13 +12,20 @@ import id from '@/static/data/lang/id.json'
 import Header from '~/components/Header.vue'
 import Board from '~/components/Board.vue'
 import VirtualKeyboard from '~/components/VirtualKeyboard.vue'
+import HelpPopup from '~/components/HelpPopup.vue'
 
 export default {
   name: 'IndexPage',
   components: {
     Header,
     Board,
-    VirtualKeyboard
+    VirtualKeyboard,
+    HelpPopup
+  },
+  data () {
+    return {
+      showHelpPopup: false
+    }
   },
   computed: {
     wording () {
