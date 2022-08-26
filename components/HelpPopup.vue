@@ -1,6 +1,11 @@
 <template>
   <div class="popup" @click.self="closeHelpPopup">
-    <div class="popup__container">
+    <div
+      :class="{
+        'popup__container-mobile': isMobile,
+        'popup__container': !isMobile
+      }"
+    >
       <div class="popup__container-close" @click="closeHelpPopup">
         <svg
           xmlns="http://www.w3.org/2000/svg"
@@ -35,6 +40,11 @@
 <script>
 export default {
   name: 'HelpPopup',
+  computed: {
+    isMobile () {
+      return this.$store.state.device.isMobile
+    }
+  },
   methods: {
     closeHelpPopup () {
       this.$emit('closeHelpPopup')
@@ -70,6 +80,14 @@ export default {
   box-sizing: border-box;
 }
 
+.popup__container-mobile {
+  width: 100%;
+  height: 100%;
+  position: relative;
+  background-color: var(--white);
+  padding: 16px;
+}
+
 .popup__container-close {
   position: absolute;
   top: 16px;
@@ -83,7 +101,6 @@ export default {
   font-size: 1.2rem;
   line-height: 1.2rem;
   font-weight: 600;
-
 }
 
 .popup__container-instructions {
@@ -93,5 +110,15 @@ export default {
 .popup__container-examples {
   border-bottom: 1px solid var(--lightgrey);
   border-top: 1px solid var(--lightgrey);
+}
+
+@media only screen and (max-width: 768px) {
+  .popup__container-title {
+    margin-top: 25px;
+  }
+
+  .popup__container-close {
+    top: 38px;
+  }
 }
 </style>

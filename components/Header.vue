@@ -141,5 +141,10 @@ export default {
     gap: 8px;
   }
 
+  .header__end-help,
+  .header__end-settings {
+    width: 22px;
+    height: 22px;
+  }
 }
 </style>
