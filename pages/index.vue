@@ -3,7 +3,7 @@
     <Header @showHelpPopup="showHelpPopup = true" />
     <Board :wording="wording" :keyboard-input="getKeyboardInput" />
     <VirtualKeyboard />
-    <HelpPopup v-if="showHelpPopup" @closeHelpPopup="showHelpPopup = false" />
+    <HelpPopup v-if="showHelpPopup" @closeHelpPopup="closeHelpPopup" />
   </div>
 </template>
 
@@ -33,6 +33,13 @@ export default {
     },
     getKeyboardInput () {
       return this.$store.state.keyboardInput
+    }
+  },
+  methods: {
+    closeHelpPopup () {
+      setTimeout(() => {
+        this.showHelpPopup = false
+      }, 500)
     }
   }
 }
