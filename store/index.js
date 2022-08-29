@@ -1,6 +1,11 @@
 export const state = () => ({
   device: {},
-  keyboardInput: ''
+  keyboardInput: '',
+  letter: {
+    wrong: [],
+    almost: [],
+    correct: []
+  }
 })
 
 export const mutations = {
@@ -15,5 +20,10 @@ export const mutations = {
   },
   deleteKeyboardInput (state) {
     state.keyboardInput = state.keyboardInput.slice(0, -1)
+  },
+  addLetter (state, { label, value }) {
+    if (!state.letter[label].includes(value)) {
+      state.letter[label].push(value)
+    }
   }
 }

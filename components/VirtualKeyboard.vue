@@ -7,7 +7,10 @@
         class="keyboard__label"
         :class="{
           'keyboard__label-enter': k === 'enter',
-          'keyboard__label-del': k === 'del'
+          'keyboard__label-del': k === 'del',
+          'keyboard__label_wrong': getWrongLetter.includes(k.toUpperCase()),
+          'keyboard__label_almost': getAlmostLetter.includes(k.toUpperCase()),
+          'keyboard__label_correct': getCorrectLetter.includes(k.toUpperCase()),
         }"
         @click="handleKeyboard(k)"
       >
@@ -39,6 +42,15 @@ export default {
   computed: {
     getKeyboard () {
       return keyboard
+    },
+    getWrongLetter () {
+      return this.$store.state.letter.wrong
+    },
+    getAlmostLetter () {
+      return this.$store.state.letter.almost
+    },
+    getCorrectLetter () {
+      return this.$store.state.letter.correct
     }
   },
   methods: {
@@ -83,6 +95,21 @@ export default {
   user-select:none;
   -webkit-user-select:none;
   -moz-user-select:none;
+}
+
+.keyboard__label_wrong {
+  background-color: var(--grey);
+  color: var(--white);
+}
+
+.keyboard__label_almost {
+  background-color: var(--yellow);
+  color: var(--white);
+}
+
+.keyboard__label_correct {
+  background-color: var(--green);
+  color: var(--white);
 }
 
 .keyboard__label-enter,

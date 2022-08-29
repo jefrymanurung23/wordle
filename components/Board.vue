@@ -135,11 +135,19 @@ export default {
               setTimeout(() => {
                 document.getElementsByClassName('board__box')[i].classList.add('board__box_wrong')
               }, timer)
+              this.$store.commit('addLetter', {
+                label: 'wrong',
+                value: word[j].toUpperCase()
+              })
             }
             if (word[j].toUpperCase() === this.getWordGuess[j].toUpperCase()) {
               setTimeout(() => {
                 document.getElementsByClassName('board__box')[i].classList.add('board__box_correct')
               }, timer)
+              this.$store.commit('addLetter', {
+                label: 'correct',
+                value: word[j].toUpperCase()
+              })
             } else if (this.getWordGuess.toUpperCase().includes(word[j].toUpperCase())) {
               let isDuplicate = false
               let isAlmost = false
@@ -177,6 +185,10 @@ export default {
                 setTimeout(() => {
                   document.getElementsByClassName('board__box')[i].classList.add('board__box_almost')
                 }, timer)
+                this.$store.commit('addLetter', {
+                  label: 'almost',
+                  value: word[j].toUpperCase()
+                })
               }
             }
             j++
