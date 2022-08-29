@@ -2,8 +2,8 @@
   <div class="popup" @click.self="closeHelpPopup">
     <div
       :class="{
-        'popup__container-mobile': isMobile,
-        'popup__container': !isMobile
+        'popup__container-mobile': $device.isMobile,
+        'popup__container': !$device.isMobile
       }"
     >
       <div class="popup__container-close" @click="closeHelpPopup">
@@ -70,15 +70,10 @@
 <script>
 export default {
   name: 'HelpPopup',
-  computed: {
-    isMobile () {
-      return this.$store.state.device.isMobile
-    }
-  },
   methods: {
     closeHelpPopup () {
       document.getElementsByClassName('popup')[0].classList.add('popup_close')
-      if (this.isMobile) {
+      if (this.$device.isMobile) {
         document.getElementsByClassName('popup__container-mobile')[0].classList.add('popup__container-mobile_close')
       } else {
         document.getElementsByClassName('popup__container')[0].classList.add('popup__container_close')

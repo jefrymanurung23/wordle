@@ -109,7 +109,7 @@ export default {
   },
   methods: {
     hideMobileKeyboard () {
-      if (this.$store.state.device.isMobile) {
+      if (this.$device.isMobile) {
         document.activeElement.blur()
       }
     },

@@ -2,8 +2,8 @@
   <div class="header">
     <div
       :class="{
-        'header__start-mobile': isMobile,
-        'header__start-desktop': !isMobile
+        'header__start-mobile': $device.isMobile,
+        'header__start-desktop': !$device.isMobile
       }"
     >
       <div class="header__start">
@@ -52,11 +52,6 @@
 <script>
 export default {
   name: 'HeaderComponent',
-  computed: {
-    isMobile () {
-      return this.$store.state.device.isMobile
-    }
-  },
   methods: {
     showHelpPopup () {
       this.$emit('showHelpPopup')
