@@ -84,7 +84,7 @@ export default {
 }
 </script>
 
-<style>
+<style scoped>
 .popup {
   width: 100%;
   height: 100%;

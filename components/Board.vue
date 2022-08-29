@@ -38,7 +38,6 @@
 </template>
 
 <script>
-import wordlist from '@/static/data/wordlist.json'
 import ToastMessage from '@/components/ToastMessage.vue'
 
 export default {
@@ -54,6 +53,16 @@ export default {
       }
     },
     keyboardInput: {
+      type: String,
+      default: ''
+    },
+    wordList: {
+      type: Array,
+      default () {
+        return []
+      }
+    },
+    wordGuess: {
       type: String,
       default: ''
     }
@@ -72,21 +81,14 @@ export default {
       showToast: false
     }
   },
-  computed: {
-    getWordGuess () {
-      return wordlist[Math.floor(Math.random() * wordlist.length)]
-    },
-    getWordlist () {
-      return wordlist
-    }
-  },
   watch: {
-    keyboardInput (newLetter, oldLetter) {
+    keyboardInput (newLetter) {
+      if (newLetter === 'enter') {
+        this.onEnter(this.word[this.wordNumber])
+      }
       if (this.wordNumber < 6) {
-        if (this.$refs[`word${this.wordNumber}`][0].value.length < 6 && newLetter !== '') {
-          if (newLetter === 'enter') {
-            this.onEnter(this.word[this.wordNumber])
-          } else if (newLetter === 'del') {
+        if (this.word[this.wordNumber].length < 5 && newLetter !== '' && newLetter !== 'enter') {
+          if (newLetter === 'del') {
             this.$store.commit('deleteKeyboardInput')
             this.$nextTick(() => {
               this.$refs[`word${this.wordNumber}`][0].value = this.$refs[`word${this.wordNumber}`][0].value.slice(0, -1)
@@ -99,7 +101,7 @@ export default {
             })
           }
         }
-        this.$refs[`word${this.wordNumber}`][0].focus()
+        this.focusInput(this.wordNumber)
         this.$store.commit('emptyKeyboardInput')
       }
     }
@@ -127,11 +129,11 @@ export default {
     },
     onEnter (word) {
       if (this.wordNumber < 6) {
-        if (this.word[this.wordNumber].length === 5 && this.getWordlist.includes(word)) {
+        if (this.word[this.wordNumber].length === 5 && this.wordList.includes(word)) {
           let j = 0
           let timer = 0
           for (let i = (this.wordNumber * 5); i < ((this.wordNumber + 1) * 5); i++) {
-            if (!this.getWordGuess.toUpperCase().includes(word[j].toUpperCase())) {
+            if (!this.wordGuess.toUpperCase().includes(word[j].toUpperCase())) {
               setTimeout(() => {
                 document.getElementsByClassName('board__box')[i].classList.add('board__box_wrong')
               }, timer)
@@ -140,7 +142,7 @@ export default {
                 value: word[j].toUpperCase()
               })
             }
-            if (word[j].toUpperCase() === this.getWordGuess[j].toUpperCase()) {
+            if (word[j].toUpperCase() === this.wordGuess[j].toUpperCase()) {
               setTimeout(() => {
                 document.getElementsByClassName('board__box')[i].classList.add('board__box_correct')
               }, timer)
@@ -148,12 +150,12 @@ export default {
                 label: 'correct',
                 value: word[j].toUpperCase()
               })
-            } else if (this.getWordGuess.toUpperCase().includes(word[j].toUpperCase())) {
+            } else if (this.wordGuess.toUpperCase().includes(word[j].toUpperCase())) {
               let isDuplicate = false
               let isAlmost = false
               for (let k = j + 1; k < 5; k++) {
                 if (word[j].toUpperCase() === word[k].toUpperCase()) {
-                  if (word[k].toUpperCase() === this.getWordGuess[k].toUpperCase()) {
+                  if (word[k].toUpperCase() === this.wordGuess[k].toUpperCase()) {
                     setTimeout(() => {
                       document.getElementsByClassName('board__box')[i].classList.add('board__box_wrong')
                     }, timer)
@@ -168,7 +170,7 @@ export default {
               }
               for (let k = j - 1; k >= 0; k--) {
                 if (word[j].toUpperCase() === word[k].toUpperCase()) {
-                  if (word[k].toUpperCase() === this.getWordGuess[k].toUpperCase()) {
+                  if (word[k].toUpperCase() === this.wordGuess[k].toUpperCase()) {
                     setTimeout(() => {
                       document.getElementsByClassName('board__box')[i].classList.add('board__box_wrong')
                     }, timer)
@@ -194,7 +196,7 @@ export default {
             j++
             timer += 500
           }
-          if (word.toUpperCase() === this.getWordGuess.toUpperCase()) {
+          if (word.toUpperCase() === this.wordGuess.toUpperCase()) {
             setTimeout(() => {
               this.showToast = true
             }, timer - 300)
@@ -210,6 +212,12 @@ export default {
             }, timer + 1000)
           } else {
             this.wordNumber += 1
+            if (this.wordNumber === 6) {
+              setTimeout(() => {
+                this.$emit('showRetryPopup')
+              }, timer)
+              timer += 300
+            }
           }
           this.focusInput(this.wordNumber)
         } else {

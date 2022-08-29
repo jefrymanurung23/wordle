@@ -1,5 +1,10 @@
 <template>
-  <div class="toast">
+  <div v-if="message.includes('benar')" class="toast">
+    {{ message.split('benar')[0] }}
+    <strong>benar</strong>
+    {{ message.split('benar')[1] }}
+  </div>
+  <div v-else class="toast">
     {{ message }}
   </div>
 </template>
@@ -27,7 +32,7 @@ export default {
   background-color: var(--green);
   color: var(--white);
   text-align: center;
-  font-weight: 600;
+  font-weight: 500;
   font-size: 1rem;
   line-height: 1rem;
   z-index: 10;
