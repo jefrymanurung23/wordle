@@ -153,6 +153,7 @@ export default {
   font-size: 0.8rem;
   line-height: 0.8rem;
   font-weight: 500;
+  user-select: none;
 }
 
 .btn:hover {
