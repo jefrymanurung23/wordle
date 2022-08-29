@@ -85,21 +85,24 @@ export default {
     keyboardInput (newLetter) {
       if (newLetter === 'enter') {
         this.onEnter(this.word[this.wordNumber])
+      } else if (newLetter === 'del') {
+        this.$store.commit('deleteKeyboardInput')
+        this.$nextTick(() => {
+          this.$refs[`word${this.wordNumber}`][0].value = this.$refs[`word${this.wordNumber}`][0].value.slice(0, -1)
+          this.word[this.wordNumber] = this.word[this.wordNumber].slice(0, -1)
+        })
       }
       if (this.wordNumber < 6) {
-        if (this.word[this.wordNumber].length < 5 && newLetter !== '' && newLetter !== 'enter') {
-          if (newLetter === 'del') {
-            this.$store.commit('deleteKeyboardInput')
-            this.$nextTick(() => {
-              this.$refs[`word${this.wordNumber}`][0].value = this.$refs[`word${this.wordNumber}`][0].value.slice(0, -1)
-              this.word[this.wordNumber] = this.word[this.wordNumber].slice(0, -1)
-            })
-          } else {
-            this.$nextTick(() => {
-              this.$refs[`word${this.wordNumber}`][0].value += newLetter
-              this.word[this.wordNumber] += newLetter
-            })
-          }
+        if (
+          this.word[this.wordNumber].length < 5 &&
+          newLetter !== '' &&
+          newLetter !== 'enter' &&
+          newLetter !== 'del'
+        ) {
+          this.$nextTick(() => {
+            this.$refs[`word${this.wordNumber}`][0].value += newLetter
+            this.word[this.wordNumber] += newLetter
+          })
         }
         this.focusInput(this.wordNumber)
         this.$store.commit('emptyKeyboardInput')
