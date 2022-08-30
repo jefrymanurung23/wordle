@@ -110,9 +110,7 @@ export default {
     }
   },
   created () {
-    if (process.client) {
-      this.isMobile = this.$mobileDetect.isPhoneSized()
-    }
+    this.isMobile = this.$mobileDetect.isPhoneSized()
   },
   methods: {
     showHelpPopup () {

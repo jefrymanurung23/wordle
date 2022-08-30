@@ -1,4 +1,5 @@
 export const state = () => ({
+  isMobile: false,
   keyboardInput: '',
   letter: {
     wrong: [],
@@ -8,6 +9,9 @@ export const state = () => ({
 })
 
 export const mutations = {
+  setDevice (state, value) {
+    state.isMobile = value
+  },
   setKeyboardInput (state, value) {
     state.keyboardInput = value
   },
