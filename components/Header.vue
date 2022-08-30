@@ -2,8 +2,8 @@
   <div class="header">
     <div
       :class="{
-        'header__start-mobile': $device.isMobile,
-        'header__start-desktop': !$device.isMobile
+        'header__start-mobile': isMobile,
+        'header__start-desktop': !isMobile
       }"
     >
       <div class="header__start">
@@ -13,13 +13,13 @@
           <rect y="68" width="100" height="16" rx="10" ry="10" />
         </svg>
       </div>
-      <div class="header__center">
+      <div class="header__center" :class="{'header__center_desktop': !isMobile}">
         Wordle Indonesia
       </div>
     </div>
     <div class="header__end">
       <svg
-        v-if="showRetry"
+        v-if="showRetryButton"
         xmlns="http://www.w3.org/2000/svg"
         xmlns:xlink="http://www.w3.org/1999/xlink"
         version="1.1"
@@ -98,14 +98,20 @@
 export default {
   name: 'HeaderComponent',
   props: {
-    showRetry: {
+    showRetryButton: {
       type: Boolean,
       default: false
     }
   },
   data () {
     return {
-      isRefresh: false
+      isRefresh: false,
+      isMobile: false
+    }
+  },
+  created () {
+    if (process.client) {
+      this.isMobile = this.$mobileDetect.isPhoneSized()
     }
   },
   methods: {
@@ -162,6 +168,13 @@ export default {
   font-weight: 700;
 }
 
+.header__center_desktop {
+  position: absolute;
+  top: 16px;
+  left: 50%;
+  transform: translate(-50%, 0);
+}
+
 .header__end {
   display: flex;
   flex: 31%;
@@ -178,7 +191,7 @@ export default {
 
 @media only screen and (max-width: 768px) {
   .header {
-    height: 40px;
+    height: 52px;
     padding: 0px 16px;
   }
 
@@ -188,8 +201,12 @@ export default {
   }
 
   .header__center {
-    font-size: 1.5rem;
-    line-height: 1.5rem;
+    font-size: 1.2rem;
+    line-height: 1.2rem;
+  }
+
+  .header__center_desktop {
+    top: 16px;
   }
 
   .header__end {

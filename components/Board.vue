@@ -111,10 +111,11 @@ export default {
   },
   mounted () {
     this.focusInput(this.wordNumber)
+    console.log(this.wordGuess)
   },
   methods: {
     hideMobileKeyboard () {
-      if (this.$device.isMobile) {
+      if (this.$mobileDetect.isPhoneSized()) {
         document.activeElement.blur()
       }
     },
@@ -206,6 +207,7 @@ export default {
             for (let i = (this.wordNumber * 5); i < ((this.wordNumber + 1) * 5); i++) {
               setTimeout(() => {
                 document.getElementsByClassName('board__box')[i].classList.add('board__box_completed')
+                this.$emit('showRetryButton')
               }, timer)
               timer += 300
             }
@@ -238,9 +240,8 @@ export default {
 <style>
 .board {
   position: fixed;
-  top: 90px;
   left: 50%;
-  transform: translate(-50%, 0);
+  transform: translate(-50%, 8%);
   display: flex;
   flex-direction: column;
   gap: 5px;
@@ -355,6 +356,13 @@ export default {
   }
   .board__box {
     width: 58px;
+    aspect-ratio: 1;
+  }
+}
+
+@media only screen and (max-width: 391px) {
+  .board__box {
+    width: 48px;
     aspect-ratio: 1;
   }
 }

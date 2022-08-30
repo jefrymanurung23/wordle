@@ -81,7 +81,7 @@ export default {
 
 .keyboard__label {
   width: 42px;
-  height: 58px;
+  height: 52px;
   background-color: var(--lightgrey);
   font-weight: 600;
   font-size: 0.85rem;
@@ -123,12 +123,12 @@ export default {
   }
 
   .keyboard__label {
-    width: 33px;
+    width: 30px;
   }
 
   .keyboard__label-enter,
   .keyboard__label-del {
-    width: 52px;
+    width: 48px;
   }
 }
 </style>

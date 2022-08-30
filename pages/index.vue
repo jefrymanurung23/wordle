@@ -1,7 +1,7 @@
 <template>
   <div>
     <Header
-      :show-retry="showRetry"
+      :show-retry-button="showRetryButton"
       @showHelpPopup="showHelpPopup = true"
     />
     <Board
@@ -10,6 +10,7 @@
       :word-list="getWordlist"
       :word-guess="getWordGuess"
       @showRetryPopup="showRetryPopup = true"
+      @showRetryButton="showRetryButton = true"
     />
     <VirtualKeyboard />
     <HelpPopup
@@ -20,7 +21,7 @@
       v-if="showRetryPopup"
       :word-guess="getWordGuess"
       @closeRetryPopup="closeRetryPopup"
-      @showRetry="showRetry = true"
+      @showRetryButton="showRetryButton = true"
     />
   </div>
 </template>
@@ -47,7 +48,7 @@ export default {
     return {
       showHelpPopup: false,
       showRetryPopup: false,
-      showRetry: false
+      showRetryButton: false
     }
   },
   computed: {

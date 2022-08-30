@@ -52,7 +52,7 @@ export default {
     closeRetryPopup () {
       document.getElementsByClassName('popup')[0].classList.add('popup_close')
       document.getElementsByClassName('popup__container')[0].classList.add('popup__container_close')
-      this.$emit('showRetry')
+      this.$emit('showRetryButton')
       this.$emit('closeRetryPopup')
     },
     retry () {
@@ -96,16 +96,12 @@ export default {
   animation: scaleup .5s cubic-bezier(0.165, 0.840, 0.440, 1.000) forwards;
 }
 
-.popup__container_close,
-.popup__container-mobile_close {
-  animation: scaledown .5s cubic-bezier(0.165, 0.840, 0.440, 1.000) forwards;
-}
-
 .popup__container-close {
   position: absolute;
   top: 16px;
   right: 16px;
   cursor: pointer;
+  animation: scaledown .5s cubic-bezier(0.165, 0.840, 0.440, 1.000) forwards;
 }
 
 .popup__container_instructions p {
